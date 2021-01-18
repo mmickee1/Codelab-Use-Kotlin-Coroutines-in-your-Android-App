@@ -49,8 +49,8 @@ class MainViewModelTest {
     @Test
     fun whenMainClicked_updatesTaps() {
         mainViewModelTest.onMainViewClicked()
-        Truth.assertThat(mainViewModelTest.taps.getValueForTest()).isEqualTo("0 taps");
+        Truth.assertThat(mainViewModelTest.taps.getValueForTest()).isEqualTo("0 taps")
         coroutineScope.advanceTimeBy(1000)
-        Truth.assertThat(mainViewModelTest.taps.getValueForTest()).isEqualTo("1 taps");
+        Truth.assertThat(mainViewModelTest.taps.getValueForTest()).isEqualTo("1 taps")
     }
 }
