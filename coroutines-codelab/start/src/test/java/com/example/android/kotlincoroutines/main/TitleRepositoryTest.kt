@@ -17,6 +17,10 @@
 package com.example.android.kotlincoroutines.main
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
+import com.example.android.kotlincoroutines.fakes.MainNetworkFake
+import com.example.android.kotlincoroutines.fakes.TitleDaoFake
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import org.junit.Rule
 import org.junit.Test
 
@@ -27,7 +31,16 @@ class TitleRepositoryTest {
 
     @Test
     fun whenRefreshTitleSuccess_insertsRows() {
-        // TODO: Write this test
+        val subject = TitleRepository(
+                MainNetworkFake("OK"),
+                TitleDaoFake("title")
+        )
+
+        // launch starts a coroutine then immediately returns
+        GlobalScope.launch {
+            //asynchronous call, can be called *after* the test completes
+            subject.refreshTitle()
+        }
     }
 
     @Test(expected = TitleRefreshError::class)
