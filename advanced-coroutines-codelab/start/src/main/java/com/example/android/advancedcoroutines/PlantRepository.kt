@@ -25,7 +25,8 @@ import com.example.android.advancedcoroutines.util.CacheOnSuccess
 import com.example.android.advancedcoroutines.utils.ComparablePair
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.withContext
 
 /**
@@ -61,6 +62,12 @@ class PlantRepository private constructor(
      */
     val plantsFlow: Flow<List<Plant>>
         get() = plantDao.getPlantsFlow()
+            .combine(customSortOrderFlow) {
+                plants, sortOrder ->
+            plants.applySort(sortOrder)
+        }
+            .flowOn(defaultDispatcher)
+            .conflate()
 
     /**
      * Fetch a list of [Plant]s from the database that matches a given [GrowZone].
@@ -153,6 +160,13 @@ class PlantRepository private constructor(
     suspend fun List<Plant>.applyMainSafeSort(customSortOrder: List<String>) =
         withContext(defaultDispatcher) {
             this@applyMainSafeSort.applySort(customSortOrder)
+        }
+
+
+    private val customSortOrderFlow = plantsListSortOrderCache::getOrAwait.asFlow()
+        .onStart {
+            emit(listOf())
+            delay(1500)
         }
 
     companion object {
