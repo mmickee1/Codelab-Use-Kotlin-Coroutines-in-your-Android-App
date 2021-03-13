@@ -25,6 +25,7 @@ import com.example.android.advancedcoroutines.util.CacheOnSuccess
 import com.example.android.advancedcoroutines.utils.ComparablePair
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.withContext
 
 /**
@@ -55,6 +56,13 @@ class PlantRepository private constructor(
     }
 
     /**
+     * Fetch a list of [Plant]s from the database.
+     * Returns a Flow-wrapped List of Plants.
+     */
+    val plantsFlow: Flow<List<Plant>>
+        get() = plantDao.getPlantsFlow()
+
+    /**
      * Fetch a list of [Plant]s from the database that matches a given [GrowZone].
      * Returns a LiveData-wrapped List of Plants.
      */
@@ -66,6 +74,14 @@ class PlantRepository private constructor(
                     emit(plantList.applyMainSafeSort(customSortOrder))
                 }
             }
+
+    /**
+     * Fetch a list of [Plant]s from the database that matches a given [GrowZone].
+     * Returns a Flow-wrapped List of Plants.
+     */
+    fun getPlantsWithGrowZoneFlow(growZone: GrowZone): Flow<List<Plant>> {
+        return plantDao.getPlantsWithGrowZoneNumberFlow(growZone.number)
+    }
 
     /**
      * Returns true if we should make a network request.
